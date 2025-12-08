@@ -1,4 +1,14 @@
-# YourStockNews -- Personalized AI‑Driven Stock News Web App
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Ajakovski/YourStockNews/main/banner.svg" 
+       alt="StockAI Banner" width="100%">
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/status-active-brightgreen" />
+  <img src="https://img.shields.io/badge/python-3.12-blue" />
+  <img src="https://img.shields.io/badge/backend-FastAPI-orange" />
+  <img src="https://img.shields.io/badge/license-AGPL3.0-lightgrey" />
+</p>
 
 *A full‑stack system combining real‑time news ingestion, AI filtering,
 and a customizable user dashboard.*
