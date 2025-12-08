@@ -1,0 +1,20 @@
+<svg width="1200" height="280" viewBox="0 0 1200 280" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#1e3c72;"/>
+      <stop offset="100%" style="stop-color:#2a5298;"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="280" rx="22" fill="url(#grad)"/>
+<!--Glow circles-->
+  <circle cx="1050" cy="60" r="130" fill="rgba(255,255,255,0.06)"/>
+  <circle cx="180" cy="220" r="160" fill="rgba(255,255,255,0.05)"/>
+<!--Main Text-->
+  <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="Arial, sans-serif" font-size="65" font-weight="700" fill="white">
+    YourStockNews
+  </text>
+<!--Subtitle-->
+  <text x="50%" y="62%" dominant-baseline="middle" text-anchor="middle" font-family="Arial, sans-serif" font-size="26" fill="rgba(255,255,255,0.85)">
+    Automated Stock News Scanner • Smart Alerts • Personalized Watchlists
+  </text>
+</svg>
