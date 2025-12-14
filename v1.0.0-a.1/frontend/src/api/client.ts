@@ -1,3 +1,5 @@
+import { User, Watchlist, Article, ArticleStats, ScanJob, AuthTokens } from '../types';
+
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000/api';
 
 class ApiClient {
@@ -17,6 +19,7 @@ class ApiClient {
 
     if (response.status === 401) {
       localStorage.removeItem('access_token');
+      localStorage.removeItem('refresh_token');
       window.location.href = '/login';
       throw new Error('Unauthorized');
     }
@@ -28,67 +31,109 @@ class ApiClient {
     return data;
   }
 
-  // Auth
-  async login(email: string, password: string) {
-    const data = await this.request<{ access_token: string }>('/auth/login', {
+  // Authentication
+  async login(email: string, password: string): Promise<AuthTokens> {
+    const data = await this.request<AuthTokens>('/auth/login', {
       method: 'POST',
       body: JSON.stringify({ email, password })
     });
     localStorage.setItem('access_token', data.access_token);
+    localStorage.setItem('refresh_token', data.refresh_token);
     return data;
   }
 
-  async register(email: string, password: string) {
-    const data = await this.request<{ access_token: string }>('/auth/register', {
+  async register(email: string, password: string): Promise<AuthTokens> {
+    const data = await this.request<AuthTokens>('/auth/register', {
       method: 'POST',
       body: JSON.stringify({ email, password })
     });
     localStorage.setItem('access_token', data.access_token);
+    localStorage.setItem('refresh_token', data.refresh_token);
     return data;
   }
 
-  async getCurrentUser() {
-    return this.request<any>('/users/me');
+  async getCurrentUser(): Promise<User> {
+    return this.request<User>('/users/me');
   }
 
   // Watchlists
-  async getWatchlists() {
-    return this.request<{ watchlists: any[]; total: number }>('/watchlists');
+  async getWatchlists(): Promise<{ watchlists: Watchlist[]; total: number }> {
+    return this.request<{ watchlists: Watchlist[]; total: number }>('/watchlists');
   }
 
-  async createWatchlist(name: string, tickers: string[]) {
-    return this.request<any>('/watchlists', {
+  async createWatchlist(name: string, tickers: string[]): Promise<Watchlist> {
+    return this.request<Watchlist>('/watchlists', {
       method: 'POST',
       body: JSON.stringify({ name, tickers })
     });
   }
 
-  async deleteWatchlist(id: number) {
-    return this.request<any>(`/watchlists/${id}`, { method: 'DELETE' });
+  async deleteWatchlist(id: number): Promise<{ message: string }> {
+    return this.request<{ message: string }>(`/watchlists/${id}`, { 
+      method: 'DELETE' 
+    });
+  }
+
+  async addTicker(watchlistId: number, ticker: string): Promise<Watchlist> {
+    return this.request<Watchlist>(`/watchlists/${watchlistId}/tickers`, {
+      method: 'POST',
+      body: JSON.stringify({ ticker })
+    });
+  }
+
+  async removeTicker(watchlistId: number, ticker: string): Promise<{ message: string }> {
+    return this.request<{ message: string }>(
+      `/watchlists/${watchlistId}/tickers/${ticker}`,
+      { method: 'DELETE' }
+    );
   }
 
   // Articles
-  async getArticles(params: Record<string, any> = {}) {
+  async getArticles(params: Record<string, any> = {}): Promise<{
+    articles: Article[];
+    total: number;
+    page: number;
+    page_size: number;
+    total_pages: number;
+  }> {
     const query = new URLSearchParams(params).toString();
-    return this.request<any>(`/articles?${query}`);
+    return this.request(`/articles?${query}`);
   }
 
-  async getArticleStats() {
-    return this.request<any>('/articles/stats');
+  async getArticleStats(): Promise<ArticleStats> {
+    return this.request<ArticleStats>('/articles/stats');
+  }
+
+  async markArticleRead(id: number): Promise<{ message: string }> {
+    return this.request<{ message: string }>(`/articles/${id}/read`, { 
+      method: 'PATCH' 
+    });
   }
 
   // Scans
-  async triggerScan(watchlistId: number) {
-    return this.request<any>('/scans', {
+  async triggerScan(watchlistId: number): Promise<ScanJob> {
+    return this.request<ScanJob>('/scans', {
       method: 'POST',
       body: JSON.stringify({ watchlist_id: watchlistId })
     });
   }
 
-  async getScanHistory() {
-    return this.request<any>('/scans');
+  async getScanHistory(): Promise<{ scan_jobs: ScanJob[]; total: number }> {
+    return this.request<{ scan_jobs: ScanJob[]; total: number }>('/scans');
+  }
+
+  async getScanStatus(id: number): Promise<ScanJob> {
+    return this.request<ScanJob>(`/scans/${id}`);
+  }
+
+  // Subscriptions
+  async getSubscription(): Promise<{
+    plan: string;
+    status: string;
+    current_period_end: string | null;
+  }> {
+    return this.request('/subscriptions/me');
   }
 }
 
 export const api = new ApiClient();
-

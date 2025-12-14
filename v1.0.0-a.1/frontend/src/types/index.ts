@@ -47,3 +47,9 @@ export interface ArticleStats {
   low: number;
   unread: number;
 }
+
+export interface AuthTokens {
+  access_token: string;
+  refresh_token: string;
+  token_type: string;
+}
